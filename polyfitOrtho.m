@@ -21,7 +21,7 @@ function [coeffTable] = orthoPolyFit(x,f,k)
     alpha = nan(k+1,1);
     s = nan(k+1,1);
     
-    coeffTable = table(s,alpha,beta);
+    coeffTable = table(s,alpha,beta,variance);
     coeffTable.Row = "" + (0:k)';
     
     for i=0:k
