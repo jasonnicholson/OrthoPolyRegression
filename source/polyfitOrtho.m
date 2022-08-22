@@ -1,5 +1,6 @@
 function [resultsTable] = polyfitOrtho(x_mu,f_mu,k)
     %polyfitOrtho fits polynomial orthogonal
+    %
     %   resultsTable = polyfitOrtho(x_mu,f_mu,k)
     %
     %% Inputs
@@ -56,16 +57,18 @@ function [resultsTable] = polyfitOrtho(x_mu,f_mu,k)
     %  
     %   Other important properties:
     %   - The algorithm does not require forming the A matrix in the least squares problem Ax=b. 
-    %   - The algorithm finds each coefficient s_i, in order form 0 to k. This has the property that you get all
+    %   - The algorithm finds each coefficient s_i, in order from 0 to k. This has the property that you get all
     %   polynomial fits from 0 to k by requesting kth polynomial fit.
     %   - The variance of the residuals is calculated for each i from 0 to k by an update formula.
     %   - The least square problem is better formed and therefore higher order of polynomials can fitted then with
     %   Vandermonde matrices (i.e. x.^(0:k), aka monomial basis).
     %
     %% Example
-    % Fit a 100th degree polynomial to the Runge function on 150 Chebyshev points. Compare to polyfit/Vandermonde
-    % matrices. The monomial basis, x^(0:n), is exponentially ill-conditioned as n increases. polyfit/Vandermonde cannot
-    % fit 100th degree polynomial.
+    % % Fit a 100th degree polynomial to the Runge function on 150 Chebyshev points. Compare to polyfit/Vandermonde
+    % % matrices. The monomial basis, x^(0:n), is exponentially ill-conditioned as n increases. polyfit/Vandermonde cannot
+    % % fit 100th degree polynomial. The Chebyshev points are chosen because high degree interpolating polynomials are
+    % % known to converge to the Runge function on this set of points (this is not interpolation though but rather least
+    % % sqaures fitting). 
     %   runge = @(x) 1./(1+25*x.^2);
     %   theta = linspace(pi,0,150);
     %   x = cos(theta); % Chebyshev points
