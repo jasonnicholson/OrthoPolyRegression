@@ -1,11 +1,11 @@
 function [resultsTable] = polyfitOrtho(x_mu,f_mu,k)
-    %polyfitOrtho fits polynomial orthogonal
+    %polyfitOrtho fits orthogonal polynomials in a least squares sense
     %
     %   resultsTable = polyfitOrtho(x_mu,f_mu,k)
     %
     %% Inputs
-    % x_mu - vector of x_mu points for fit. m = numel(x_mu) by definition.
-    % f_mu - vector of y points for fit. Must be the same size as x_mu.
+    % x_mu - vector of x points for fit. m = numel(x_mu) by definition.
+    % f_mu - vector of y points for fit. f_mu m elements.
     % k - polynomial fit order. This algorithm requires k<=m-1. 
     %
     %% Outputs
@@ -22,10 +22,10 @@ function [resultsTable] = polyfitOrtho(x_mu,f_mu,k)
     %
     %   where 
     %
-    %   - p_i(x) is polynomial of order i. By definition, p_i is orthogonal to p_j as long as i~=j on the inner product,
-    %   sum(p_j(x_mu).*p_i(x_mu)). i in p_i(x) is the order of the polynomial. 
-    %   - s_i is the coefficient of p_i.
-    %   - y_k(x) is then a polynomial of order k constructed from orthogonal polynomials.
+    %   - p_i(x) is a polynomial of order i. By definition, p_i is orthogonal to p_j as long as i~=j on the inner 
+    %     product, sum(p_j(x_mu).*p_i(x_mu)). 
+    %   - s_i is the coefficient of p_i. - y_k(x) is then a polynomial of order k constructed from polynomials that are
+    %     orthogonal on the inner product sum(p_j(x_mu).*p_i(x_mu)).
     %
     %   The orthogonal polynomials, p_i, are generated using the following definition:
     %
@@ -41,8 +41,8 @@ function [resultsTable] = polyfitOrtho(x_mu,f_mu,k)
     %   alpha_(i+1) = sum(x_mu.*p_i(x_mu).^2)./sum(p_i(x_mu).^2); 
     %   beta(i) = sum(x_mu.*p_i(x_mu).*p_(i-1)(x_mu))./sum(p_(i-1)(x_mu).^2);
     %   
-    %   % Note that more involved, less intuitive formula are used in the code. These formulas can be found in Forsythe,
-    %   [1].
+    %   % Note that more involved, less intuitive formulas are used in the code. These formulas can be found in 
+    %     Forsythe, [1].
     %
     %  The beauty of this formulation is that the least squares problem is diagonal:
     %
@@ -58,17 +58,17 @@ function [resultsTable] = polyfitOrtho(x_mu,f_mu,k)
     %   Other important properties:
     %   - The algorithm does not require forming the A matrix in the least squares problem Ax=b. 
     %   - The algorithm finds each coefficient s_i, in order from 0 to k. This has the property that you get all
-    %   polynomial fits from 0 to k by requesting kth polynomial fit.
+    %     polynomial fits from 0 to k by requesting kth polynomial fit. Use 0 to k2 rows where k2<k.
     %   - The variance of the residuals is calculated for each i from 0 to k by an update formula.
-    %   - The least square problem is better formed and therefore higher order of polynomials can fitted then with
-    %   Vandermonde matrices (i.e. x.^(0:k), aka monomial basis).
+    %   - The least square problem is better formed than Vandermonde matrices (i.e. x.^(0:k), aka monomial basis). This
+    %     allows fitting of much higher order polynomials.
     %
     %% Example
-    % % Fit a 100th degree polynomial to the Runge function on 150 Chebyshev points. Compare to polyfit/Vandermonde
-    % % matrices. The monomial basis, x^(0:n), is exponentially ill-conditioned as n increases. polyfit/Vandermonde cannot
-    % % fit 100th degree polynomial. The Chebyshev points are chosen because high degree interpolating polynomials are
+    % % Fit a 100th degree polynomial to the Runge function on 150 Chebyshev points. Compare to polyfit/Vandermonde %
+    % matrices. The monomial basis, x^(0:n), is exponentially ill-conditioned as n increases. polyfit/Vandermonde cannot
+    % % fit a 100th degree polynomial. The Chebyshev points are chosen because high degree interpolating polynomials are
     % % known to converge to the Runge function on this set of points (this is not interpolation though but rather least
-    % % sqaures fitting). 
+    % % sqaures fitting).
     %   runge = @(x) 1./(1+25*x.^2);
     %   theta = linspace(pi,0,150);
     %   x = cos(theta); % Chebyshev points
