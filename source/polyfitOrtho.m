@@ -93,7 +93,7 @@ function [resultsTable] = polyfitOrtho(x_mu,f_mu,k)
     end
     
     m = numel(x_mu);
-    assert(k<m-1,"k < m-1 is required for this algorithm.")
+%     assert(k<m-1,"k < m-1 is required for this algorithm.");
     
     assert(m==numel(f_mu),"x and f must have the same number of elements.");
     
