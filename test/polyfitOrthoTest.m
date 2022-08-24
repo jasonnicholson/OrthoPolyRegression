@@ -1,9 +1,11 @@
 
 runge = @(x) 1./(1+25*x.^2);
-theta = linspace(pi,0,150);
+
+%% Least Square Fit
+m = 500;
+theta = linspace(pi,0,m);
 x = cos(theta); % Chebyshev points
 y = runge(x);
-k = 100;
+k = m-1;
 resultsTable = polyfitOrtho(x,y,k);
-
-%% 
+fplot(@(x) runge(x) - polyvalOrtho(x,resultsTable),[min(x) max(x)])

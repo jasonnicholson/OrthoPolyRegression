@@ -1,7 +1,7 @@
-function [resultsTable] = polyfitOrtho(x_mu,f_mu,k)
+function [coefficientsAndResults] = polyfitOrtho(x_mu,f_mu,k)
     %polyfitOrtho fits orthogonal polynomials in a least squares sense
     %
-    %   resultsTable = polyfitOrtho(x_mu,f_mu,k)
+    %   coefficientsAndResults = polyfitOrtho(x_mu,f_mu,k)
     %
     %% Inputs
     % x_mu - vector of x points for fit. m = numel(x_mu) by definition.
@@ -9,7 +9,7 @@ function [resultsTable] = polyfitOrtho(x_mu,f_mu,k)
     % k - polynomial fit order. This algorithm requires k<=m-1. 
     %
     %% Outputs
-    % resultsTable - A table containing the coefficients, alphas, betas, and variances'. The table always has k+1 rows.
+    % coefficientsAndResults - A table containing the coefficients, alphas, betas, and variances'. The table always has k+1 rows.
     %     s - is the cofficients of each polynomial.
     %     alpha - The 1st coefficient it the orthogonality procedure.
     %     beta - The 2nd coefficient in the orthogonality procedure.
@@ -74,7 +74,7 @@ function [resultsTable] = polyfitOrtho(x_mu,f_mu,k)
     %   x = cos(theta); % Chebyshev points
     %   y = runge(x);
     %   k = 100;
-    %   resultsTable = polyfitOrtho(x,y,k);
+    %   coefficientsAndResults = polyfitOrtho(x,y,k);
     %
     %
     %% References
@@ -89,12 +89,10 @@ function [resultsTable] = polyfitOrtho(x_mu,f_mu,k)
     arguments
         x_mu (:,1) double;
         f_mu (:,1) double;
-        k (:,1) double {mustBeInteger, mustBePositive};
+        k (1,1) double {mustBeInteger, mustBePositive};
     end
     
     m = numel(x_mu);
-%     assert(k<m-1,"k < m-1 is required for this algorithm.");
-    
     assert(m==numel(f_mu),"x and f must have the same number of elements.");
     
     %% Algorithm
@@ -104,30 +102,30 @@ function [resultsTable] = polyfitOrtho(x_mu,f_mu,k)
     p_iMinus1 = zeros(m,1); % p_(-1)
     p_i = ones(m,1); % p_0
     deltaSquarediMinus1 = f_mu'*f_mu;
-    resultsTable = table(nan(k+1,1), nan(k+1,1), nan(k+1,1), nan(k+1,1),'VariableNames',["s","alpha","beta","variance"]);
-    resultsTable.beta(1) = 0; % beta_0
-    resultsTable.Row = "" + (0:k)';
+    coefficientsAndResults = table(nan(k+1,1), nan(k+1,1), nan(k+1,1), nan(k+1,1),'VariableNames',["s","alpha","beta","variance"]);
+    coefficientsAndResults.beta(1) = 0; % beta_0
+    coefficientsAndResults.Row = "" + (0:k)';
     wii = m;
     
     for i=0:k
         omegai = f_mu'*p_i;
-        resultsTable.s(i+1) = omegai/wii; % s_i
-        deltaSquaredi = deltaSquarediMinus1 - resultsTable.s(i+1)^2*wii;
-        resultsTable.variance(i+1) = deltaSquaredi./(m-i-1);
+        coefficientsAndResults.s(i+1) = omegai/wii; % s_i
+        deltaSquaredi = deltaSquarediMinus1 - coefficientsAndResults.s(i+1)^2*wii;
+        coefficientsAndResults.variance(i+1) = deltaSquaredi./(m-i-1);
         % TODO. We could test here if the variance is low enough.
         
         if i>=k
             break
         end
         
-        resultsTable.alpha(i+2) = (x_mu.*p_i)'*p_i/wii; % alpha_(i+1)
+        coefficientsAndResults.alpha(i+2) = (x_mu.*p_i)'*p_i/wii; % alpha_(i+1)
         
         % Prepare for next loop
-        p_iPlus1 = (x_mu-resultsTable.alpha(i+2)).*p_i - resultsTable.beta(i+1)*p_iMinus1;
+        p_iPlus1 = (x_mu-coefficientsAndResults.alpha(i+2)).*p_i - coefficientsAndResults.beta(i+1)*p_iMinus1;
         p_iMinus1 = p_i;
         p_i = p_iPlus1;
         wiPlus1iPlus1 = p_iPlus1'*p_iPlus1;
-        resultsTable.beta(i+2) = wiPlus1iPlus1/wii; % beta_(i+1)
+        coefficientsAndResults.beta(i+2) = wiPlus1iPlus1/wii; % beta_(i+1)
         wii = wiPlus1iPlus1;
         deltaSquarediMinus1 = deltaSquaredi;
         
