@@ -2,7 +2,7 @@ function y = polyvalOrtho(x,coefficients)
     
     arguments
         x double;
-        coefficients (:,4) table;
+        coefficients struct;
     end
     
     % initialize

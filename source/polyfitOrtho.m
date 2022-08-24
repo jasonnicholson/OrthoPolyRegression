@@ -6,10 +6,11 @@ function [coefficientsAndResults] = polyfitOrtho(x_mu,f_mu,k)
     %% Inputs
     % x_mu - vector of x points for fit. m = numel(x_mu) by definition.
     % f_mu - vector of y points for fit. f_mu m elements.
-    % k - polynomial fit order. This algorithm requires k<=m-1. 
+    % k - polynomial fit order.
     %
     %% Outputs
-    % coefficientsAndResults - A table containing the coefficients, alphas, betas, and variances'. The table always has k+1 rows.
+    % coefficientsAndResults - A structure containing the coefficients, alphas, betas, and variances'. The structure
+    % always has k+1 rows.
     %     s - is the cofficients of each polynomial.
     %     alpha - The 1st coefficient it the orthogonality procedure.
     %     beta - The 2nd coefficient in the orthogonality procedure.
@@ -102,14 +103,13 @@ function [coefficientsAndResults] = polyfitOrtho(x_mu,f_mu,k)
     p_iMinus1 = zeros(m,1); % p_(-1)
     p_i = ones(m,1); % p_0
     deltaSquarediMinus1 = f_mu'*f_mu;
-    coefficientsAndResults = table(nan(k+1,1), nan(k+1,1), nan(k+1,1), nan(k+1,1),'VariableNames',["s","alpha","beta","variance"]);
+    coefficientsAndResults = struct('s', nan(k+1,1), 'alpha', nan(k+1,1), 'beta', nan(k+1,1), 'variance', nan(k+1,1));
     coefficientsAndResults.beta(1) = 0; % beta_0
-    coefficientsAndResults.Row = "" + (0:k)';
     wii = m;
     
     for i=0:k
         omegai = f_mu'*p_i;
-        coefficientsAndResults.s(i+1) = omegai/wii; % s_i
+        coefficientsAndResults.s(i+1) = omegai./wii; % s_i
         deltaSquaredi = deltaSquarediMinus1 - coefficientsAndResults.s(i+1)^2*wii;
         coefficientsAndResults.variance(i+1) = deltaSquaredi./(m-i-1);
         % TODO. We could test here if the variance is low enough.
@@ -125,7 +125,7 @@ function [coefficientsAndResults] = polyfitOrtho(x_mu,f_mu,k)
         p_iMinus1 = p_i;
         p_i = p_iPlus1;
         wiPlus1iPlus1 = p_iPlus1'*p_iPlus1;
-        coefficientsAndResults.beta(i+2) = wiPlus1iPlus1/wii; % beta_(i+1)
+        coefficientsAndResults.beta(i+2) = wiPlus1iPlus1./wii; % beta_(i+1)
         wii = wiPlus1iPlus1;
         deltaSquarediMinus1 = deltaSquaredi;
         
