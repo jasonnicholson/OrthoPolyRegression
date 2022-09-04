@@ -48,7 +48,7 @@ function [coefficientsAndResults] = polyfitOrtho(x_mu,f_mu,k)
     %  The beauty of this formulation is that the least squares problem is diagonal:
     %
     %  w_ii = sum(p_i(x_mu).*p_i(x_mu));
-    %  omega_i = sum(f_mu.*p_i(x_mu);
+    %  omega_i = sum(f_mu.*p_i(x_mu));
     %  
     %  w_00*s_0                  = omega_0
     %         w11*s_1            = omega_1
