@@ -4,4 +4,12 @@ The monomial basis is exponential ill conditioned. A better approach is using an
 
 The plan here is to develop the code to implement Forsythe's paper from 1957. Then, extend the code using Weisfeld's paper for multiple variables.
 
-For now, the code isn't ready. Read the Forsythe paper and Weisfeld paper in the reference documents folder.
+Foresythe's algorithm is working and mostly documented. Give it a shot.
+
+TODO:
+- Document polyvalOrtho
+- Write a packaging script.
+- Implemented the multidimensiona version.
+- Consider adding scaling to improve robustness.
+- Consider converting to an object oriented library.
+- 
