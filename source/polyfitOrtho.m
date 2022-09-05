@@ -17,7 +17,9 @@ function [coefficientsAndResults] = polyfitOrtho(x_mu,f_mu,k)
     %     variance - The variance of the residuals for each polynomial fit. 
     %
     %% Description
-    % This functions fits a polynomial of the form.
+    % This function fits a polynomial of order k to x_mu, f_mu. An orthogonal basis is used published by Forsythe [1].
+    % Unlike polyfit, fitting 100th degree or greater polynomial is no problem. This functions fits a polynomial of the
+    % form.
     %
     %   y_k(x) = s_0*p_0(x) + s_1*p_1(x) + ... + s_k*p_k(x)
     %
@@ -62,21 +64,28 @@ function [coefficientsAndResults] = polyfitOrtho(x_mu,f_mu,k)
     %     polynomial fits from 0 to k by requesting kth polynomial fit. Use 0 to k2 rows where k2<k.
     %   - The variance of the residuals is calculated for each i from 0 to k by an update formula.
     %   - The least square problem is better formed than Vandermonde matrices (i.e. x.^(0:k), aka monomial basis). This
-    %     allows fitting of much higher order polynomials.
-    %
+    %     allows fitting of much higher order polynomials. The monomial basis is exponentially ill-conditioned. The
+    %     basis used in this function is much better conditioned.
+    %   - The algorithm time complexity is O(k*m). This is better than the QR decompositions's O(2*m*k^2). 
+    % 
     %% Example
-    % % Fit a 100th degree polynomial to the Runge function on 150 Chebyshev points. Compare to polyfit/Vandermonde %
-    % matrices. The monomial basis, x^(0:n), is exponentially ill-conditioned as n increases. polyfit/Vandermonde cannot
-    % % fit a 100th degree polynomial. The Chebyshev points are chosen because high degree interpolating polynomials are
-    % % known to converge to the Runge function on this set of points (this is not interpolation though but rather least
-    % % sqaures fitting).
+    % % Fit a 186th degree polynomial to the Runge function on 500 Chebyshev points. The Chebyshev points are chosen
+    % % because high degree interpolating polynomials are known to converge to the Runge function.
     %   runge = @(x) 1./(1+25*x.^2);
-    %   theta = linspace(pi,0,150);
+    %   theta = linspace(pi,0,500);
     %   x = cos(theta); % Chebyshev points
     %   y = runge(x);
-    %   k = 100;
+    %   k = 186;
     %   coefficientsAndResults = polyfitOrtho(x,y,k);
-    %
+    %   figure;
+    %   fplot(@(x) runge(x)-polyvalOrtho(x,coefficientsAndResults),[-1 1])
+    %   ylabel('Error')
+    %   title(sprintf('Error = runge(x) - %dth polynomial',k))
+    %   figure;
+    %   fplot(@(x) runge(x),[-1 1])
+    %   hold all;
+    %   fplot(@(x) polyvalOrtho(x,coefficientsAndResults),[-1 1])
+    %   legend(["Runge Function", sprintf("%dth degree polynomial",k)],'location','best')
     %
     %% References
     % The algorithm and nomenclature comes from Forsythe 1957.

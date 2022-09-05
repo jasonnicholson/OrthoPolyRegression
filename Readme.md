@@ -7,7 +7,6 @@ The plan here is to develop the code to implement Forsythe's paper from 1957. Th
 Foresythe's algorithm is working and mostly documented. Give it a shot.
 
 TODO:
-- Document polyvalOrtho
 - Write a packaging script.
 - Implemented the multidimensiona version.
 - Consider adding scaling to improve robustness.
