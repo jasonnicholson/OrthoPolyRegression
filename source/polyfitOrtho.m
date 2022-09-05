@@ -78,13 +78,13 @@ function [coefficientsAndResults] = polyfitOrtho(x_mu,f_mu,k)
     %   k = 186;
     %   coefficientsAndResults = polyfitOrtho(x,y,k);
     %   figure;
-    %   fplot(@(x) runge(x)-polyvalOrtho(x,coefficientsAndResults),[-1 1])
+    %   fplot(@(x) runge(x)-polyvalOrtho(coefficientsAndResults,x),[-1 1])
     %   ylabel('Error')
     %   title(sprintf('Error = runge(x) - %dth polynomial',k))
     %   figure;
     %   fplot(@(x) runge(x),[-1 1])
     %   hold all;
-    %   fplot(@(x) polyvalOrtho(x,coefficientsAndResults),[-1 1])
+    %   fplot(@(x) polyvalOrtho(coefficientsAndResults,x),[-1 1])
     %   legend(["Runge Function", sprintf("%dth degree polynomial",k)],'location','best')
     %
     %% References
@@ -106,8 +106,7 @@ function [coefficientsAndResults] = polyfitOrtho(x_mu,f_mu,k)
     assert(m==numel(f_mu),"x and f must have the same number of elements.");
     
     %% Algorithm
-    % This algorithm is 
-    
+        
     % initialize
     p_iMinus1 = zeros(m,1); % p_(-1)
     p_i = ones(m,1); % p_0
@@ -116,7 +115,9 @@ function [coefficientsAndResults] = polyfitOrtho(x_mu,f_mu,k)
     coefficientsAndResults.beta(1) = 0; % beta_0
     wii = m;
     
+    
     for i=0:k
+        % Calculate next coefficient
         omegai = f_mu'*p_i;
         coefficientsAndResults.s(i+1) = omegai./wii; % s_i
         deltaSquaredi = deltaSquarediMinus1 - coefficientsAndResults.s(i+1)^2*wii;

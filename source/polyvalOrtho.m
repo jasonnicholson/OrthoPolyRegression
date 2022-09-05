@@ -1,11 +1,11 @@
-function y = polyvalOrtho(x,coefficients)
+function y = polyvalOrtho(coefficients,x)
     % polyvalOrtho evaluates the orthogonal polynomial created from polyfitOrtho
     %
-    %   y = polyvalOrtho(x,coefficients)
+    %   y = polyvalOrtho(coefficients,x)
     %
     %% Inputz
-    % x - double of any size. points to evaluate the polynomial. 
     % coefficients - Structure created from polyfitOrtho. 
+    % x - double of any size. points to evaluate the polynomial.
     %
     %% Outputs
     % y - double. Same size as x. Values of polynomial evaluated at x.
@@ -26,19 +26,19 @@ function y = polyvalOrtho(x,coefficients)
     %   y = runge(x);
     %   k = 186;
     %   coefficientsAndResults = polyfitOrtho(x,y,k);
-    %   fplot(@(x) runge(x)-polyvalOrtho(x,coefficientsAndResults),[-1 1])
+    %   fplot(@(x) runge(x)-polyvalOrtho(coefficientsAndResults,x),[-1 1])
     %   ylabel('Error')
     %   figure;
     %   fplot(@(x) runge(x),[-1 1])
     %   hold all;
-    %   fplot(@(x) polyvalOrtho(x,coefficientsAndResults),[-1 1])
+    %   fplot(@(x) polyvalOrtho(coefficientsAndResults,x),[-1 1])
     %   legend(["Runge Function", "100th degree polynomial"],'location','best')
     %
     % See also polyfitOrtho, polyfit, polyval
     
     arguments
-        x double;
         coefficients struct;
+        x double;
     end
     
     % initialize
